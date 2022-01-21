@@ -1,0 +1,65 @@
+﻿@using System.Timers
+<button type="button" class="btn @(@class) @(showConfirmation ? ConfirmationCssClass : string.Empty)" @onclick='@(async () => await HandleClick())' @attributes="AdditionalAttributes">
+    @if (showConfirmation)
+    {
+        <text>
+            @ConfirmMessage
+            <span class="SpinnerCssClass"></span>
+        </text>
+    }
+    else
+    {
+        @ChildContent
+    }
+</button>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string @class { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+
+    private Timer Countdown;
+
+    [Parameter]
+    public string ConfirmMessage { get; set; } = "Confirm?";
+
+    [Parameter]
+    public string ConfirmationCssClass { get; set; } = "is-loading";
+
+    [Parameter]
+    public string SpinnerCssClass { get; set; } = "btn-spinner";
+
+    [Parameter]
+    public int CountdownInSecs { get; set; } = 5;
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private bool showConfirmation;
+    private async Task HandleClick()
+    {
+        if (showConfirmation)
+        {
+            await OnClick.InvokeAsync();
+        }
+        else
+        {
+            showConfirmation = true;
+
+            Countdown = new Timer(CountdownInSecs * 1000);
+            Countdown.Elapsed += (sender, args) =>
+            {
+                showConfirmation = false;
+                StateHasChanged();
+            };
+            Countdown.AutoReset = false;
+            Countdown.Start();
+        }
+    }
+
+}

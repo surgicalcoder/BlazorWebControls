@@ -1,0 +1,43 @@
+﻿@using System.Timers
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+<input @bind-value="@Text" @bind-value:event="oninput" @onkeyup="@handleInput" @attributes="AdditionalAttributes" />
+
+@code {
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnValueChange { get; set; }
+
+    [Parameter]
+    public int DebounceTime { get; set; } = 500;
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+
+    private Timer debounceTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        debounceTimer = new Timer(DebounceTime);
+        debounceTimer.Elapsed += OnUserFinished;
+        debounceTimer.AutoReset = false;
+    }
+
+    private void handleInput(KeyboardEventArgs eventArgs)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    private void OnUserFinished(object sender, ElapsedEventArgs e)
+    {
+        InvokeAsync(async () =>
+        {
+            await OnValueChange.InvokeAsync(Text);
+        });
+
+    }
+
+}
