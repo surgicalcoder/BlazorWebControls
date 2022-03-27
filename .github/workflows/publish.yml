@@ -18,7 +18,7 @@ jobs:
           dotnet-version: '6.0.x'
       - name: Publish
         id: publish_nuget
-        uses: rohith/publish-nuget@v2
+        uses: alirezanet/publish-nuget@v3.0.3
         with:
           PROJECT_FILE_PATH: GoLive.Blazor.Controls/GoLive.Blazor.Controls.csproj
           VERSION_FILE_PATH: Directory.Build.props
