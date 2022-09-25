@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using FastMember;
+using GoLive.Saturn.Data.Entities;
 
 namespace GoLive.Blazor.Controls
 {
@@ -16,7 +17,31 @@ namespace GoLive.Blazor.Controls
             foreach (var exp in func)
             {
                 var propName = exp.GetPropertyName();
-                accessor[source, propName] = accessor[updated, propName];
+
+                if (exp.Body.Type.Assembly == typeof(Int32).Assembly)
+                {
+                    accessor[source, propName] = accessor[updated, propName];
+                    continue;
+                }
+
+                var check = typeof(IUpdatableFrom<>).MakeGenericType(exp.Body.Type);
+
+                if (check.IsAssignableFrom(exp.Body.Type))
+                {
+                    try
+                    {
+                        var method = check.GetMethod("UpdateFrom", BindingFlags.Instance | BindingFlags.Public);
+                        method?.Invoke(accessor[source, propName], new object[] { accessor[updated, propName] });
+                    }
+                    catch (Exception)
+                    {
+                        accessor[source, propName] = accessor[updated, propName];
+                    }
+                }
+                else
+                {
+                    accessor[source, propName] = accessor[updated, propName];
+                }
             }
         }
 
@@ -29,7 +54,31 @@ namespace GoLive.Blazor.Controls
             foreach (var exp in func)
             {
                 var propName = exp.GetPropertyName();
-                accessor[source, propName] = accessor[updated, propName];
+
+                if (exp.Body.Type.Assembly == typeof(Int32).Assembly)
+                {
+                    accessor[source, propName] = accessor[updated, propName];
+                    continue;
+                }
+
+                var check = typeof(IUpdatableFrom<>).MakeGenericType(exp.Body.Type);
+
+                if (check.IsAssignableFrom(exp.Body.Type))
+                {
+                    try
+                    {
+                        var method = check.GetMethod("UpdateFrom", BindingFlags.Instance | BindingFlags.Public);
+                        method?.Invoke(accessor[source, propName], new object[] { accessor[updated, propName] });
+                    }
+                    catch (Exception)
+                    {
+                        accessor[source, propName] = accessor[updated, propName];
+                    }
+                }
+                else
+                {
+                    accessor[source, propName] = accessor[updated, propName];
+                }
             }
         }
 
