@@ -1,5 +1,6 @@
 ﻿@using System.Timers
-<button type="button" class="btn @(@class) @(showConfirmation ? ConfirmationCssClass : string.Empty)" @onclick='@(async () => await HandleClick())' @attributes="AdditionalAttributes">
+
+<button type="button" class="btn @(ButtonClass) @(showConfirmation ? ConfirmationCssClass : string.Empty)" @onclick='@(async () => await HandleClick())' @attributes="@AdditionalAttributes">
     @if (showConfirmation)
     {
         <text>
@@ -18,7 +19,7 @@
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
-    public string @class { get; set; }
+    public string ButtonClass { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
@@ -50,15 +51,17 @@
         else
         {
             showConfirmation = true;
-
-            Countdown = new Timer(CountdownInSecs * 1000);
+            StateHasChanged();
+            Countdown ??= new Timer(CountdownInSecs * 1000);
             Countdown.Elapsed += (sender, args) =>
             {
                 showConfirmation = false;
+                Countdown.Enabled = false;
                 StateHasChanged();
             };
             Countdown.AutoReset = false;
-            Countdown.Start();
+            Countdown.Enabled = true;
+            StateHasChanged();
         }
     }
 
