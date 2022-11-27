@@ -44,8 +44,16 @@ namespace GoLive.Blazor.Controls
             item.Total = total ?? data.Count();
 
             item.Page = pageIndex;
-            item.PageSize = pageSize;
-            item.PageCount = (item.Total + item.PageSize - 1) / item.PageSize;
+            item.PageSize = pageSize;        
+            
+            if (item.PageSize == 0)
+            {
+                item.PageCount = 0;
+            }
+            else
+            {
+                item.PageCount = (item.Total + item.PageSize - 1) / item.PageSize;
+            }
 
             return item;
         }
