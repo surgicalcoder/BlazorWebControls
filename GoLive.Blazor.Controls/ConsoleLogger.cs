@@ -15,7 +15,7 @@ namespace GoLive.Blazor.Controls
 
         private void LogInternal(LogLevel level, string Message, string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
         {
-            if (MinimumLoggingLevel < level)
+            if (MinimumLoggingLevel > level)
             {
                 return;
             }
