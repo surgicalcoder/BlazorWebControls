@@ -8,7 +8,7 @@ namespace GoLive.Blazor.Controls
     {
         public static bool IsEmpty(this string value)
         {
-            return String.IsNullOrEmpty(value);
+            return string.IsNullOrEmpty(value);
         }
         
         public static int AsInt(this string value)
@@ -18,64 +18,45 @@ namespace GoLive.Blazor.Controls
         
         public static int AsInt(this string value, int defaultValue)
         {
-            int result;
-            return Int32.TryParse(value, out result) ? result : defaultValue;
+            return int.TryParse(value, out var result) ? result : defaultValue;
         }
 
         public static decimal AsDecimal(this string value)
         {
             // Decimal.TryParse does not work consistently for some locales. For instance for lt-LT, it accepts but ignores decimal values so "12.12" is parsed as 1212.
-            return As<Decimal>(value);
+            return As<decimal>(value);
         }
 
         public static decimal AsDecimal(this string value, decimal defaultValue)
         {
-            return As<Decimal>(value, defaultValue);
-        }
-        
-        public static float AsFloat(this string value)
-        {
-            return AsFloat(value, default(float));
-        }
-        
-        public static float AsFloat(this string value, float defaultValue)
-        {
-            float result;
-            return Single.TryParse(value, out result) ? result : defaultValue;
+            return As<decimal>(value, defaultValue);
         }
 
-        public static DateTime AsDateTime(this string value)
+        public static float AsFloat(this string value, float defaultValue = default(float))
         {
-            return AsDateTime(value, default(DateTime));
+            return float.TryParse(value, out var result) ? result : defaultValue;
         }
 
-        public static DateTime AsDateTime(this string value, DateTime defaultValue)
+        public static DateTime AsDateTime(this string value, DateTime defaultValue = default)
         {
-            DateTime result;
-            return DateTime.TryParse(value, out result) ? result : defaultValue;
+            return DateTime.TryParse(value, out var result) ? result : defaultValue;
         }
 
         public static TValue As<TValue>(this string value)
         {
-            return As<TValue>(value, default(TValue));
+            return As<TValue>(value, default);
         }
-        
-        public static bool AsBool(this string value)
+
+        public static bool AsBool(this string value, bool defaultValue = default)
         {
-            return AsBool(value, default(bool));
-        }
-        
-        public static bool AsBool(this string value, bool defaultValue)
-        {
-            bool result;
-            return Boolean.TryParse(value, out result) ? result : defaultValue;
+            return bool.TryParse(value, out var result) ? result : defaultValue;
         }
         
         public static TValue As<TValue>(this string value, TValue defaultValue)
         {
             try
             {
-                TypeConverter converter = TypeDescriptor.GetConverter(typeof(TValue));
+                var converter = TypeDescriptor.GetConverter(typeof(TValue));
                 if (converter.CanConvertFrom(typeof(string)))
                 {
                     return (TValue)converter.ConvertFrom(value);
@@ -96,38 +77,34 @@ namespace GoLive.Blazor.Controls
         
         public static bool IsBool(this string value)
         {
-            bool result;
-            return Boolean.TryParse(value, out result);
+            return bool.TryParse(value, out _);
         }
         
         public static bool IsInt(this string value)
         {
-            int result;
-            return Int32.TryParse(value, out result);
+            return int.TryParse(value, out _);
         }
 
         public static bool IsDecimal(this string value)
         {
             // For some reason, Decimal.TryParse incorrectly parses floating point values as decimal value for some cultures.
             // For example, 12.5 is parsed as 125 in lt-LT.
-            return Is<Decimal>(value);
+            return Is<decimal>(value);
         }
         
         public static bool IsFloat(this string value)
         {
-            float result;
-            return Single.TryParse(value, out result);
+            return float.TryParse(value, out _);
         }
 
         public static bool IsDateTime(this string value)
         {
-            DateTime result;
-            return DateTime.TryParse(value, out result);
+            return DateTime.TryParse(value, out _);
         }
         
         public static bool Is<TValue>(this string value)
         {
-            TypeConverter converter = TypeDescriptor.GetConverter(typeof(TValue));
+            var converter = TypeDescriptor.GetConverter(typeof(TValue));
             if (converter != null)
             {
                 try
