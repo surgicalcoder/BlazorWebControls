@@ -7,12 +7,12 @@ namespace GoLive.Blazor.Controls.Pager
 {
     public class PagerModel : ComponentBase
     {
-        [Parameter] 
+        [Parameter]
         public PagedResponse Result { get; set; }
 
         [Parameter]
         public int Page { get; set; }
-    
+
         [Parameter]
         public EventCallback<int> PageChanged { get; set; }
 
@@ -24,19 +24,22 @@ namespace GoLive.Blazor.Controls.Pager
         [DefaultValue(5)]
         public int NumberToShow { get; set; }
 
-        protected int StartIndex { get; private set; } = 0;
-        protected int FinishIndex { get; private set; } = 0;
-
-        protected int StartRecord { get; private set; } = 0;
-        protected int EndRecord { get; private set; } = 0;
+        protected int StartIndex { get; private set; }
+        protected int FinishIndex { get; private set; }
+        protected int StartRecord { get; private set; }
+        protected int EndRecord { get; private set; }
 
         protected override void OnParametersSet()
         {
+            if (Result == null)
+            {
+                return;
+            }
+
             StartIndex = Math.Max(Result.Page - NumberToShow, 1);
             FinishIndex = Math.Min(Result.Page + NumberToShow, Result.PageCount);
-            StartRecord = (Result.Page * Result.PageSize) - Result.PageSize + 1;
+            StartRecord = Result.Page * Result.PageSize - Result.PageSize + 1;
             EndRecord = Math.Min(Result.Page * Result.PageSize, Result.Total);
-            base.OnParametersSet();
         }
 
         protected async Task PagerButtonClicked(int page)
