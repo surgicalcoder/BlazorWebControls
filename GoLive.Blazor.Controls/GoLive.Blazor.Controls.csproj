@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
 
         <PackageId>GoLive.Blazor.Controls</PackageId>
 		<Authors>SurgicalCoder</Authors>
 		<Company>N/A</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>Some random Blazor Web Controls.</Description>
-		<Copyright>Copyright 2022 - SurgicalCoder</Copyright>
+		<Copyright>Copyright 2022-2024 - SurgicalCoder</Copyright>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -17,6 +17,7 @@
 		<CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
 		<PackageProjectUrl>https://github.com/surgicalcoder/BlazorWebControls</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/surgicalcoder/BlazorWebControls</RepositoryUrl>
+		<LangVersion>12</LangVersion>
     </PropertyGroup>
 
 

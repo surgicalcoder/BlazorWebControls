@@ -7,21 +7,22 @@ on:
 
 jobs:
   publish:
+    env:
+      BUILD_VER : '1.4'
     name: build, pack & publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v3
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: 8.x
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1
+      - name: Get Build Version
+        run: |
+          echo "BUILD_VERSION=${{ format('{0}.{1}', env.BUILD_VER, github.run_number ) }}" >> $GITHUB_ENV
+      - name: Build CacheTower
+        run: dotnet pack GoLive.Blazor.Controls/GoLive.Blazor.Controls.csproj --configuration Release -p:Version=$BUILD_VERSION -p:PackageVersion=$BUILD_VERSION -p:GeneratePackageOnBuild=false
       - name: Publish
-        id: publish_nuget
-        uses: alirezanet/publish-nuget@v3.0.3
-        with:
-          PROJECT_FILE_PATH: GoLive.Blazor.Controls/GoLive.Blazor.Controls.csproj
-          VERSION_FILE_PATH: Directory.Build.props
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          NUGET_KEY: ${{secrets.NUGET_KEY}}
-          INCLUDE_SYMBOLS: false
+        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_KEY}}
