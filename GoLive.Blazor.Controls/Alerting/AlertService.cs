@@ -2,7 +2,7 @@
 
 namespace GoLive.Blazor.Controls.Alerting
 {
-    [SingletonService]
+    [RegisterSingleton]
     public class AlertService
     {
         public EventCallback<AlertItem> OnShow;

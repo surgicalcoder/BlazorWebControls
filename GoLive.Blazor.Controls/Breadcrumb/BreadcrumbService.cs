@@ -2,7 +2,7 @@
 
 namespace GoLive.Blazor.Controls.Breadcrumb
 {
-    [SingletonService]
+    [RegisterSingleton]
     public class BreadcrumbService : IDisposable
     {
 

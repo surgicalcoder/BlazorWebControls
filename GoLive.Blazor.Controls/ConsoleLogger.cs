@@ -19,7 +19,7 @@ namespace GoLive.Blazor.Controls
             {
                 return;
             }
-            Console.WriteLine($"[{DateTime.Now.ToString("O")},{level.ToString().ToUpper()[..1]}] [{sourceFilePath},{sourceLineNumber}] [{memberName}] {Message}");
+            Console.WriteLine($"[{DateTime.Now:O},{level.ToString().ToUpper()[..1]}] [{sourceFilePath},{sourceLineNumber}] [{memberName}] {Message}");
         }
         
         public void LogTrace(string Message, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)

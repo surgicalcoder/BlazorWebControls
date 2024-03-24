@@ -54,20 +54,5 @@ namespace GoLive.Blazor.Controls
             var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
             return (attributes.Length > 0) ? (T)attributes[0] : null;
         }
-        
-        public static Action<T> Debounce<T>(this Action<T> func, int milliseconds = 300)
-        {
-		
-            return arg =>
-            {
-                Task.Delay(milliseconds).ContinueWith(t =>
-                    {
-                        if (t.IsCompletedSuccessfully)
-                        {
-                            func(arg);
-                        }
-                    }, TaskScheduler.Default);
-            };
-        }
     }
 }
