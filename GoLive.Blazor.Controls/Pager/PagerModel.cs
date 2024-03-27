@@ -39,7 +39,11 @@ namespace GoLive.Blazor.Controls.Pager
             StartIndex = Math.Max(Result.Page - NumberToShow, 1);
             FinishIndex = Math.Min(Result.Page + NumberToShow, Result.PageCount);
             StartRecord = Result.Page * Result.PageSize - Result.PageSize + 1;
-            EndRecord = Math.Min(Result.Page * Result.PageSize, Result.Total);
+            this.EndRecord = Math.Min(this.Result.Page * this.Result.PageSize, this.Result.Total);
+            if (this.EndRecord == 0 && this.Result.Total > 0)
+            {
+                this.EndRecord = this.Result.Total;
+            }
         }
 
         protected async Task PagerButtonClicked(int page)
