@@ -20,8 +20,8 @@ public class VisibilityComponent : ComponentBase
     
     [Inject] private IAuthorizationService AuthorizationService { get; set; } = default!;
 
-    public List<string> Policies { get; set; } = [];
-    public List<string> Roles { get; set; } = [];
+    [Parameter] public List<string> Policies { get; set; } = [];
+    [Parameter] public List<string> Roles { get; set; } = [];
 
     public bool Visible = false;
 

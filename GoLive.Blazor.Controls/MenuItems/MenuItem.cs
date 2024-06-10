@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace GoLive.Blazor.Controls.MenuItems;
 
-public abstract class MenuItem
+public abstract class MenuItem : VisibilityComponent
 {
     public virtual required string Title { get; set; }
 }
