@@ -1,14 +1,11 @@
 name: Publish to Nuget
 on:
-  push:
-    branches:
-      - master # Default release branch
   workflow_dispatch:
 
 jobs:
   publish:
     env:
-      BUILD_VER : '1.4'
+      BUILD_VER : '1.5'
     name: build, pack & publish
     runs-on: ubuntu-latest
     steps:
