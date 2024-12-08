@@ -5,111 +5,110 @@ using FastMember;
 using GoLive.Saturn.Data.Entities;
 using System.Reflection;
 
-namespace GoLive.Blazor.Controls
+namespace GoLive.Blazor.Controls;
+
+public static class UpdateHelperExtension
 {
-    public static class UpdateHelperExtension
+    public static void UpdateFrom<T>(this T source, T updated, params Expression<Func<T, dynamic>>[] func)
     {
-        public static void UpdateFrom<T>(this T source, T updated, params Expression<Func<T, dynamic>>[] func)
+        if (func == null) return;
+
+        var accessor = TypeAccessor.Create(typeof(T));
+
+        foreach (var exp in func)
         {
-            if (func == null) return;
+            var propName = exp.GetPropertyName();
 
-            var accessor = TypeAccessor.Create(typeof(T));
-
-            foreach (var exp in func)
+            if (exp.Body.Type.Assembly == typeof(Int32).Assembly)
             {
-                var propName = exp.GetPropertyName();
+                accessor[source, propName] = accessor[updated, propName];
+                continue;
+            }
 
-                if (exp.Body.Type.Assembly == typeof(Int32).Assembly)
+            var check = typeof(IUpdatableFrom<>).MakeGenericType(exp.Body.Type);
+
+            if (check.IsAssignableFrom(exp.Body.Type))
+            {
+                try
                 {
-                    accessor[source, propName] = accessor[updated, propName];
-                    continue;
+                    var method = check.GetMethod("UpdateFrom", BindingFlags.Instance | BindingFlags.Public);
+                    method?.Invoke(accessor[source, propName], new object[] { accessor[updated, propName] });
                 }
-
-                var check = typeof(IUpdatableFrom<>).MakeGenericType(exp.Body.Type);
-
-                if (check.IsAssignableFrom(exp.Body.Type))
-                {
-                    try
-                    {
-                        var method = check.GetMethod("UpdateFrom", BindingFlags.Instance | BindingFlags.Public);
-                        method?.Invoke(accessor[source, propName], new object[] { accessor[updated, propName] });
-                    }
-                    catch (Exception)
-                    {
-                        accessor[source, propName] = accessor[updated, propName];
-                    }
-                }
-                else
+                catch (Exception)
                 {
                     accessor[source, propName] = accessor[updated, propName];
                 }
             }
-        }
-
-        public static void UpdateFromList<T>(this T source, T updated, List<Expression<Func<T, dynamic>>> func)
-        {
-            if (func == null) return;
-
-            var accessor = TypeAccessor.Create(typeof(T));
-
-            foreach (var exp in func)
+            else
             {
-                var propName = exp.GetPropertyName();
+                accessor[source, propName] = accessor[updated, propName];
+            }
+        }
+    }
 
-                if (exp.Body.Type.Assembly == typeof(Int32).Assembly)
+    public static void UpdateFromList<T>(this T source, T updated, List<Expression<Func<T, dynamic>>> func)
+    {
+        if (func == null) return;
+
+        var accessor = TypeAccessor.Create(typeof(T));
+
+        foreach (var exp in func)
+        {
+            var propName = exp.GetPropertyName();
+
+            if (exp.Body.Type.Assembly == typeof(Int32).Assembly)
+            {
+                accessor[source, propName] = accessor[updated, propName];
+                continue;
+            }
+
+            var check = typeof(IUpdatableFrom<>).MakeGenericType(exp.Body.Type);
+
+            if (check.IsAssignableFrom(exp.Body.Type))
+            {
+                try
                 {
-                    accessor[source, propName] = accessor[updated, propName];
-                    continue;
+                    var method = check.GetMethod("UpdateFrom", BindingFlags.Instance | BindingFlags.Public);
+                    method?.Invoke(accessor[source, propName], new object[] { accessor[updated, propName] });
                 }
-
-                var check = typeof(IUpdatableFrom<>).MakeGenericType(exp.Body.Type);
-
-                if (check.IsAssignableFrom(exp.Body.Type))
-                {
-                    try
-                    {
-                        var method = check.GetMethod("UpdateFrom", BindingFlags.Instance | BindingFlags.Public);
-                        method?.Invoke(accessor[source, propName], new object[] { accessor[updated, propName] });
-                    }
-                    catch (Exception)
-                    {
-                        accessor[source, propName] = accessor[updated, propName];
-                    }
-                }
-                else
+                catch (Exception)
                 {
                     accessor[source, propName] = accessor[updated, propName];
                 }
             }
+            else
+            {
+                accessor[source, propName] = accessor[updated, propName];
+            }
         }
+    }
 
 
-        public static string GetPropertyName<TModel, TValue>(this Expression<Func<TModel, TValue>> propertySelector, char delimiter = '.', char endTrim = ')')
-        {
-            return (propertySelector.Body as MemberExpression ?? (MemberExpression)((UnaryExpression)propertySelector.Body).Operand).Member.Name;
-        }
+    public static string GetPropertyName<TModel, TValue>(this Expression<Func<TModel, TValue>> propertySelector, char delimiter = '.', char endTrim = ')')
+    {
+        return (propertySelector.Body as MemberExpression ?? (MemberExpression)((UnaryExpression)propertySelector.Body).Operand).Member.Name;
+    }
 
-        public static string Base64Encode(this string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
-        }
+    public static string Base64Encode(this string plainText)
+    {
+        var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+        return System.Convert.ToBase64String(plainTextBytes);
+    }
 
-        public static string Base64Decode(this string base64EncodedData)
-        {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
-            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-        }
+    public static string Base64Decode(this string base64EncodedData)
+    {
+        var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+        return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+    }
 
-        public static string Base64EncodeUrlSafe(this string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes).Replace('+', '-').Replace('/', '_');
-        }
-        public static string Base64DecodeUrlSafe(this string base64EncodedData)
-        {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData.Replace('-','+').Replace('_','/'));
-            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-        }
+    public static string Base64EncodeUrlSafe(this string plainText)
+    {
+        var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+        return System.Convert.ToBase64String(plainTextBytes).Replace('+', '-').Replace('/', '_');
+    }
+    public static string Base64DecodeUrlSafe(this string base64EncodedData)
+    {
+        var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData.Replace('-','+').Replace('_','/'));
+        return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
     }
 }
