@@ -42,9 +42,7 @@ public static class PagedResponseExt
 
         item.Page = Math.Max(pageIndex, 1);
         item.PageSize = Math.Max(pageSize, 1);
-        item.PageCount = item.PageSize == 0 
-            ? 0 
-            : (item.Total + item.PageSize - 1) / item.PageSize;
+        item.PageCount = Math.Min((item.Total + item.PageSize - 1) / item.PageSize, 1);
 
         return item;
     }
