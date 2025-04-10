@@ -7,7 +7,7 @@ jobs:
     env:
       BUILD_VER : '1.5'
     name: build, pack & publish
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
       - name: Setup dotnet
@@ -18,8 +18,8 @@ jobs:
         uses: nuget/setup-nuget@v1
       - name: Get Build Version
         run: |
-          echo "BUILD_VERSION=${{ format('{0}.{1}', env.BUILD_VER, github.run_number ) }}" >> $GITHUB_ENV
+          echo "BUILD_VERSION=${{ format('{0}.{1}', env.BUILD_VER, github.run_number ) }}" >> $env:GITHUB_ENV
       - name: Build
-        run: dotnet pack GoLive.Blazor.Controls/GoLive.Blazor.Controls.csproj --configuration Release -p:Version=$BUILD_VERSION -p:PackageVersion=$BUILD_VERSION -p:GeneratePackageOnBuild=false
+        run: dotnet pack GoLive.Blazor.Controls/GoLive.Blazor.Controls.csproj --configuration Release -p:Version=$env:BUILD_VERSION -p:PackageVersion=$env:BUILD_VERSION -p:GeneratePackageOnBuild=false
       - name: Publish
         run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_KEY}}
