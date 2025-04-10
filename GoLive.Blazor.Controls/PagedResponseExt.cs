@@ -40,17 +40,11 @@ public static class PagedResponseExt
 
         item.Total = total ?? data.Count();
 
-        item.Page = pageIndex;
-        item.PageSize = pageSize;        
-            
-        if (item.PageSize == 0)
-        {
-            item.PageCount = 0;
-        }
-        else
-        {
-            item.PageCount = (item.Total + item.PageSize - 1) / item.PageSize;
-        }
+        item.Page = Math.Max(pageIndex, 1);
+        item.PageSize = Math.Max(pageSize, 1);
+        item.PageCount = item.PageSize == 0 
+            ? 0 
+            : (item.Total + item.PageSize - 1) / item.PageSize;
 
         return item;
     }
