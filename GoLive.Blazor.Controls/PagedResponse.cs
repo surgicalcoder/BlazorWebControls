@@ -44,7 +44,7 @@ public class PagedResponse<T> : PagedResponse
         item.Total = total ?? data.Count();
         item.Page = Math.Max(pageIndex, 1);
         item.PageSize = Math.Max(pageSize, 1);
-        item.PageCount = Math.Min((item.Total + item.PageSize - 1) / item.PageSize, 1);
+        item.PageCount = Math.Max((item.Total + item.PageSize - 1) / item.PageSize, 1);
 
         return item;
     }
