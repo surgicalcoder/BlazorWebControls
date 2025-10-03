@@ -5,7 +5,7 @@ on:
 jobs:
   publish:
     env:
-      BUILD_VER : '1.6'
+      BUILD_VER : '1.7'
     name: build, pack & publish
     runs-on: windows-latest
     steps:
