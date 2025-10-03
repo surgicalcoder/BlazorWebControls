@@ -7,12 +7,12 @@ namespace GoLive.Blazor.Controls;
 
 public static class CursorResponseExt
 {
-    public static async Task<CursorResponse<T>> Response<T>(this IEnumerable<T> data, string? nextCursor = null, string? previousCursor = null, int pageSize = 0, int? total = null, Func<T, Task> RunEachItemAfterPaging = null, Func<List<T>, Task> RunGroupAfterPaging = null)
+    public static async Task<CursorResponse<T>> Response<T>(this IEnumerable<T> data, string? nextCursor = null, string? previousCursor = null, int pageSize = 0, int? total = null, Func<T, Task>? RunEachItemAfterPaging = null, Func<List<T>, Task>? RunGroupAfterPaging = null, Func<T, string?>? getIdFunc = null)
     {
-        return await CursorResponse<T>.CreateAsync(data, nextCursor, previousCursor, pageSize, total, RunEachItemAfterPaging, RunGroupAfterPaging);
+        return await CursorResponse<T>.CreateAsync(data, nextCursor, previousCursor, pageSize, total, RunEachItemAfterPaging, RunGroupAfterPaging, getIdFunc);
     }
         
-    public static async Task<CursorResponse<T>> Response<T, T2>(this IEnumerable<T2> data, string? nextCursor, string? previousCursor, int pageSize, Func<T2, T> ConvertItems, int? total = null, Func<T, Task> RunEachItemAfterPaging = null, Func<List<T>, Task> RunGroupAfterPaging = null)
+    public static async Task<CursorResponse<T>> Response<T, T2>(this IEnumerable<T2> data, string? nextCursor, string? previousCursor, int pageSize, Func<T2, T> ConvertItems, int? total = null, Func<T, Task>? RunEachItemAfterPaging = null, Func<List<T>, Task>? RunGroupAfterPaging = null, Func<T, string?>? getIdFunc = null)
     {
         CursorResponse<T> item = new();
 
@@ -39,21 +39,41 @@ public static class CursorResponseExt
         }
 
         item.Total = total ?? data.Count();
-
         item.NextCursor = nextCursor;
         item.PreviousCursor = previousCursor;
         item.PageSize = Math.Max(pageSize, 1);
+
+        // Add NextCursor logic similar to CreateAsync methods
+        if (string.IsNullOrWhiteSpace(item.NextCursor) && item.Data.Count > 0)
+        {
+            var idFunc = getIdFunc ?? CursorResponse<T>.DefaultGetIdFunc;
+            
+            // If no specific function provided, check global registry for inheritance-based function
+            if (idFunc == null)
+            {
+                var globalFunc = CursorResponse.GetGlobalIdFunction(typeof(T));
+                if (globalFunc != null)
+                {
+                    idFunc = dataItem => globalFunc(dataItem!);
+                }
+            }
+            
+            if (idFunc != null)
+            {
+                item.NextCursor = idFunc(item.Data[^1]);
+            }
+        }
 
         return item;
     }    
     
     
-    public static async Task<CursorResponse<T>> Response<T>(this IAsyncEnumerable<T> data, string? nextCursor = null, string? previousCursor = null, int pageSize = 0, int? total = null, Func<T, Task> RunEachItemAfterPaging = null, Func<List<T>, Task> RunGroupAfterPaging = null)
+    public static async Task<CursorResponse<T>> Response<T>(this IAsyncEnumerable<T> data, string? nextCursor = null, string? previousCursor = null, int pageSize = 0, int? total = null, Func<T, Task>? RunEachItemAfterPaging = null, Func<List<T>, Task>? RunGroupAfterPaging = null, Func<T, string?>? getIdFunc = null)
     {
-        return await CursorResponse<T>.CreateAsync(data, nextCursor, previousCursor, pageSize, total, RunEachItemAfterPaging, RunGroupAfterPaging);
+        return await CursorResponse<T>.CreateAsync(data, nextCursor, previousCursor, pageSize, total, RunEachItemAfterPaging, RunGroupAfterPaging, getIdFunc);
     }
         
-    public static async Task<CursorResponse<T>> Response<T, T2>(this IAsyncEnumerable<T2> data, string? nextCursor, string? previousCursor, int pageSize, Func<T2, T> ConvertItems, int? total = null, Func<T, Task> RunEachItemAfterPaging = null, Func<List<T>, Task> RunGroupAfterPaging = null)
+    public static async Task<CursorResponse<T>> Response<T, T2>(this IAsyncEnumerable<T2> data, string? nextCursor, string? previousCursor, int pageSize, Func<T2, T> ConvertItems, int? total = null, Func<T, Task>? RunEachItemAfterPaging = null, Func<List<T>, Task>? RunGroupAfterPaging = null, Func<T, string?>? getIdFunc = null)
     {
         CursorResponse<T> item = new();
 
@@ -80,10 +100,30 @@ public static class CursorResponseExt
         }
 
         item.Total = total ?? (await data.CountAsync());
-
         item.NextCursor = nextCursor;
         item.PreviousCursor = previousCursor;
         item.PageSize = Math.Max(pageSize, 1);
+
+        // Add NextCursor logic similar to CreateAsync methods
+        if (string.IsNullOrWhiteSpace(item.NextCursor) && item.Data.Count > 0)
+        {
+            var idFunc = getIdFunc ?? CursorResponse<T>.DefaultGetIdFunc;
+            
+            // If no specific function provided, check global registry for inheritance-based function
+            if (idFunc == null)
+            {
+                var globalFunc = CursorResponse.GetGlobalIdFunction(typeof(T));
+                if (globalFunc != null)
+                {
+                    idFunc = dataItem => globalFunc(dataItem!);
+                }
+            }
+            
+            if (idFunc != null)
+            {
+                item.NextCursor = idFunc(item.Data[^1]);
+            }
+        }
 
         return item;
     }
