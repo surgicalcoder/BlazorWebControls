@@ -82,7 +82,8 @@ public class CursorResponse<T> : CursorResponse
         int pageSize = 0,
         int? total = null,
         Func<T, Task>? processEachItem = null,
-        Func<List<T>, Task>? processGroup = null)
+        Func<List<T>, Task>? processGroup = null,
+        Func<T, string?>? getIdFunc = null)
     {
         ArgumentNullException.ThrowIfNull(data);
 
@@ -105,6 +106,26 @@ public class CursorResponse<T> : CursorResponse
             await Task.WhenAll(response.Data.Select(processEachItem));
         }
 
+        if (string.IsNullOrWhiteSpace(response.NextCursor) && response.Data.Count > 0)
+        {
+            var idFunc = getIdFunc ?? DefaultGetIdFunc;
+            
+            // If no specific function provided, check global registry for inheritance-based function
+            if (idFunc == null)
+            {
+                var globalFunc = GetGlobalIdFunction(typeof(T));
+                if (globalFunc != null)
+                {
+                    idFunc = item => globalFunc(item!);
+                }
+            }
+            
+            if (idFunc != null)
+            {
+                response.NextCursor = idFunc(response.Data[^1]);
+            }
+        }
+
         return response;
     }
 
@@ -115,7 +136,8 @@ public class CursorResponse<T> : CursorResponse
         int pageSize = 0,
         int? total = null,
         Func<T, Task>? processEachItem = null,
-        Func<List<T>, Task>? processGroup = null)
+        Func<List<T>, Task>? processGroup = null,
+        Func<T, string?>? getIdFunc = null)
     {
         ArgumentNullException.ThrowIfNull(data);
 
@@ -138,6 +160,26 @@ public class CursorResponse<T> : CursorResponse
         if (processEachItem != null)
         {
             await Task.WhenAll(response.Data.Select(processEachItem));
+        }
+
+        if (string.IsNullOrWhiteSpace(response.NextCursor) && response.Data.Count > 0)
+        {
+            var idFunc = getIdFunc ?? DefaultGetIdFunc;
+            
+            // If no specific function provided, check global registry for inheritance-based function
+            if (idFunc == null)
+            {
+                var globalFunc = GetGlobalIdFunction(typeof(T));
+                if (globalFunc != null)
+                {
+                    idFunc = item => globalFunc(item!);
+                }
+            }
+            
+            if (idFunc != null)
+            {
+                response.NextCursor = idFunc(response.Data[^1]);
+            }
         }
 
         return response;
