@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,51 @@ public class CursorResponse
     public string? NextCursor { get; set; }
     public int PageSize { get; set; }
     public int Total { get; set; }
+    
+    /// <summary>
+    /// Global registry for ID extraction functions by type, supporting inheritance
+    /// </summary>
+    private static readonly ConcurrentDictionary<Type, Func<object, string?>> _globalIdFunctions = new();
+    
+    /// <summary>
+    /// Sets a global ID extraction function for a specific type and all its derived types
+    /// </summary>
+    /// <typeparam name="TBase">The base type (can be abstract)</typeparam>
+    /// <param name="idFunc">Function to extract ID from instances of TBase or its derived types</param>
+    public static void SetGlobalIdFunction<TBase>(Func<TBase, string?> idFunc)
+    {
+        _globalIdFunctions[typeof(TBase)] = obj => idFunc((TBase)obj);
+    }
+    
+    /// <summary>
+    /// Gets the appropriate ID extraction function for a given type, checking inheritance chain
+    /// </summary>
+    /// <param name="type">The type to find an ID function for</param>
+    /// <returns>The ID extraction function, or null if none found</returns>
+    internal static Func<object, string?>? GetGlobalIdFunction(Type type)
+    {
+        // Check exact type match first
+        if (_globalIdFunctions.TryGetValue(type, out var exactMatch))
+            return exactMatch;
+            
+        // Check inheritance chain
+        var currentType = type.BaseType;
+        while (currentType != null)
+        {
+            if (_globalIdFunctions.TryGetValue(currentType, out var inheritedMatch))
+                return inheritedMatch;
+            currentType = currentType.BaseType;
+        }
+        
+        // Check interfaces
+        foreach (var interfaceType in type.GetInterfaces())
+        {
+            if (_globalIdFunctions.TryGetValue(interfaceType, out var interfaceMatch))
+                return interfaceMatch;
+        }
+        
+        return null;
+    }
 }
 
 /// <summary>
