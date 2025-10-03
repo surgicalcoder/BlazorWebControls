@@ -70,6 +70,11 @@ public class CursorResponse<T> : CursorResponse
 {
     public List<T> Data { get; set; } = new();
 
+    /// <summary>
+    /// Default function to extract ID from items of type T. Used when getIdFunc parameter is not provided.
+    /// </summary>
+    public static Func<T, string?>? DefaultGetIdFunc { get; set; }
+
     public static async Task<CursorResponse<T>> CreateAsync(
         IEnumerable<T> data,
         string? nextCursor = null,
