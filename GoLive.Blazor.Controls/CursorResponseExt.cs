@@ -35,7 +35,10 @@ public static class CursorResponseExt
         }
         if (RunEachItemAfterPaging != null)
         {
-            await item.Data.ToAsyncEnumerable().ForEachAwaitAsync(async arg => await RunEachItemAfterPaging(arg));
+            await foreach (var arg in item.Data.ToAsyncEnumerable())
+            {
+                await RunEachItemAfterPaging(arg);
+            }
         }
 
         item.Total = total ?? data.Count();
@@ -96,7 +99,10 @@ public static class CursorResponseExt
         }
         if (RunEachItemAfterPaging != null)
         {
-            await item.Data.ToAsyncEnumerable().ForEachAwaitAsync(async arg => await RunEachItemAfterPaging(arg));
+            await foreach (var arg in item.Data.ToAsyncEnumerable())
+            {
+                await RunEachItemAfterPaging(arg);
+            }
         }
 
         item.Total = total ?? (await data.CountAsync());

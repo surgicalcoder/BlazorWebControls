@@ -5,7 +5,7 @@ on:
 jobs:
   publish:
     env:
-      BUILD_VER : '1.7'
+      BUILD_VER : '2.0'
     name: build, pack & publish
     runs-on: windows-latest
     steps:
@@ -13,7 +13,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.x
+          dotnet-version: 10.x
       - name: Setup NuGet
         uses: nuget/setup-nuget@v1
       - name: Get Build Version
