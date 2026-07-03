@@ -3,34 +3,37 @@
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <PackageId>GoLive.Blazor.Controls</PackageId>
-		<Authors>SurgicalCoder</Authors>
-		<Company>N/A</Company>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Description>Some random Blazor Web Controls.</Description>
-		<Copyright>Copyright 2022-2026 - SurgicalCoder</Copyright>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<GenerateRepositoryUrlAttribute>true</GenerateRepositoryUrlAttribute>
-		<PackOnBuild>true</PackOnBuild>
-		<CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
-		<PackageProjectUrl>https://github.com/surgicalcoder/BlazorWebControls</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/surgicalcoder/BlazorWebControls</RepositoryUrl>
-		<LangVersion>12</LangVersion>
+        <Authors>SurgicalCoder</Authors>
+        <Company>N/A</Company>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Description>Some random Blazor Web Controls.</Description>
+        <Copyright>Copyright 2022-2026 - SurgicalCoder</Copyright>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <GenerateRepositoryUrlAttribute>true</GenerateRepositoryUrlAttribute>
+        <PackOnBuild>true</PackOnBuild>
+        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+        <PackageProjectUrl>https://github.com/surgicalcoder/BlazorWebControls</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/surgicalcoder/BlazorWebControls</RepositoryUrl>
+        <LangVersion>12</LangVersion>
     </PropertyGroup>
 
 
     <ItemGroup>
-        <SupportedPlatform Include="browser" />
+        <SupportedPlatform Include="browser"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoRegisterInject" Version="1.4.1" />
-        <PackageReference Include="FastMember-surgicalcoder" Version="1.3.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.5" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.5" />
-        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.5" />
-        <PackageReference Include="GoLive.Saturn.Data.Entities" Version="3.4.27" />
+        <PackageReference Include="AutoRegisterInject" Version="1.4.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>analyzers; build; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="FastMember-surgicalcoder" Version="1.3.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.5"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.5"/>
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.5"/>
+        <PackageReference Include="GoLive.Saturn.Data.Entities" Version="3.4.27"/>
     </ItemGroup>
 
 </Project>
